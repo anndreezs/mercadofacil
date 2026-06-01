@@ -9,38 +9,75 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CompraIdRouteImport } from './routes/compra.$id'
+import { Route as ComandaIdRouteImport } from './routes/comanda.$id'
 
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompraIdRoute = CompraIdRouteImport.update({
+  id: '/compra/$id',
+  path: '/compra/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComandaIdRoute = ComandaIdRouteImport.update({
+  id: '/comanda/$id',
+  path: '/comanda/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
+  '/comanda/$id': typeof ComandaIdRoute
+  '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
+  '/comanda/$id': typeof ComandaIdRoute
+  '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
+  '/comanda/$id': typeof ComandaIdRoute
+  '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/historico' | '/comanda/$id' | '/compra/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/historico' | '/comanda/$id' | '/compra/$id'
+  id: '__root__' | '/' | '/historico' | '/comanda/$id' | '/compra/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HistoricoRoute: typeof HistoricoRoute
+  ComandaIdRoute: typeof ComandaIdRoute
+  CompraIdRoute: typeof CompraIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +85,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compra/$id': {
+      id: '/compra/$id'
+      path: '/compra/$id'
+      fullPath: '/compra/$id'
+      preLoaderRoute: typeof CompraIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comanda/$id': {
+      id: '/comanda/$id'
+      path: '/comanda/$id'
+      fullPath: '/comanda/$id'
+      preLoaderRoute: typeof ComandaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HistoricoRoute: HistoricoRoute,
+  ComandaIdRoute: ComandaIdRoute,
+  CompraIdRoute: CompraIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
