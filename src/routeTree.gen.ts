@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CompraIdRouteImport } from './routes/compra.$id'
 import { Route as ComandaIdRouteImport } from './routes/comanda.$id'
 
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +37,47 @@ const ComandaIdRoute = ComandaIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
   '/comanda/$id': typeof ComandaIdRoute
   '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
   '/comanda/$id': typeof ComandaIdRoute
   '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
   '/comanda/$id': typeof ComandaIdRoute
   '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/comanda/$id' | '/compra/$id'
+  fullPaths: '/' | '/historico' | '/comanda/$id' | '/compra/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/comanda/$id' | '/compra/$id'
-  id: '__root__' | '/' | '/comanda/$id' | '/compra/$id'
+  to: '/' | '/historico' | '/comanda/$id' | '/compra/$id'
+  id: '__root__' | '/' | '/historico' | '/comanda/$id' | '/compra/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HistoricoRoute: typeof HistoricoRoute
   ComandaIdRoute: typeof ComandaIdRoute
   CompraIdRoute: typeof CompraIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HistoricoRoute: HistoricoRoute,
   ComandaIdRoute: ComandaIdRoute,
   CompraIdRoute: CompraIdRoute,
 }
