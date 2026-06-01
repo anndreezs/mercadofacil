@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CompraIdRouteImport } from './routes/compra.$id'
+import { Route as ComandaIdRouteImport } from './routes/comanda.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompraIdRoute = CompraIdRouteImport.update({
+  id: '/compra/$id',
+  path: '/compra/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComandaIdRoute = ComandaIdRouteImport.update({
+  id: '/comanda/$id',
+  path: '/comanda/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/comanda/$id': typeof ComandaIdRoute
+  '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/comanda/$id': typeof ComandaIdRoute
+  '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/comanda/$id': typeof ComandaIdRoute
+  '/compra/$id': typeof CompraIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/comanda/$id' | '/compra/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/comanda/$id' | '/compra/$id'
+  id: '__root__' | '/' | '/comanda/$id' | '/compra/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComandaIdRoute: typeof ComandaIdRoute
+  CompraIdRoute: typeof CompraIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,12 +68,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compra/$id': {
+      id: '/compra/$id'
+      path: '/compra/$id'
+      fullPath: '/compra/$id'
+      preLoaderRoute: typeof CompraIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comanda/$id': {
+      id: '/comanda/$id'
+      path: '/comanda/$id'
+      fullPath: '/comanda/$id'
+      preLoaderRoute: typeof ComandaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComandaIdRoute: ComandaIdRoute,
+  CompraIdRoute: CompraIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
